@@ -1,44 +1,43 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
-import { login as AuthLogin } from "../store/authSlice"
-import { Button, Input, Logo } from "./index"
-import { useDispatch } from 'react-redux'
-import { AuthService } from '../appwrite/auth'
-import { useForm } from "react-hook-form"
+import React, {useState} from 'react'
+import {Link, useNavigate} from 'react-router-dom'
+import { login as authLogin } from '../store/authSlice'
+import {Button, Input, Logo} from "./index"
+import {useDispatch} from "react-redux"
+import authService from "../appwrite/auth"
+import {useForm} from "react-hook-form"
 
+function Login() {
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const {register, handleSubmit} = useForm()
+    const [error, setError] = useState("")
 
-const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm()
-  const [error, setError] = useState()
-  const login = async (data) => {
-    setError("")
-    try {
-      const response = await AuthService.login(data);
-      if (response) {
-        const userData = await AuthService.getCurrentUser();
-        if (userData)
-          dispatch(AuthLogin(response));
-      }
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
+    const login = async(data) => {
+        setError("")
+        try {
+            const session = await authService.login(data)
+            if (session) {
+                const userData = await authService.getCurrentUser()
+                if(userData) dispatch(authLogin(userData));
+                navigate("/")
+            }
+        } catch (error) {
+            setError(error.message)
+        }
     }
-  };
+
   return (
     <div
-    className='flex items-center justify-center w-full'
+    className='flex items-center justify-center w-full pt-2 pb-2'
     >
-        <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
+        <div className={`mx-auto w-full max-w-lg bg-gray-700 rounded-xl p-8 border border-black/10`}>
         <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
-                        <Logo width="100%" />
+                        <Logo width='70px' />
                     </span>
         </div>
-        <h2 className="text-center text-2xl font-bold leading-tight">Sign in to your account</h2>
-        <p className="mt-2 text-center text-base text-black/60">
+        <h2 className="text-center text-2xl font-bold leading-tight text-gray-100">Sign in to your account</h2>
+        <p className="mt-2 text-center text-base text-gray-100">
                     Don&apos;t have any account?&nbsp;
                     <Link
                         to="/signup"
@@ -49,7 +48,7 @@ const Login = () => {
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
         <form onSubmit={handleSubmit(login)} className='mt-8'>
-            <div className='space-y-5'>
+            <div className='space-y-5 text-gray-100'>
                 <Input
                 label="Email: "
                 placeholder="Enter your email"
@@ -72,7 +71,7 @@ const Login = () => {
                 />
                 <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-pink-700 hover:bg-pink-800"
                 >Sign in</Button>
             </div>
         </form>

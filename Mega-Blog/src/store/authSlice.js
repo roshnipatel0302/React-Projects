@@ -1,26 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    userData: null,
-    status: false,         
+    status : false,
+    userData: null
 }
 
 const authSlice = createSlice({
-    name:"auth",
+    name: "auth",
     initialState,
-    reducers:{
-        login:(state,action)=>{
+    reducers: {
+        login: (state, action) => {
             state.status = true;
-            userData = action.payload;
-
+            state.userData = action.payload.userData;
         },
-        logOut:(state)=>{
+        logout: (state) => {
             state.status = false;
             state.userData = null;
         }
-    }
-});
-export const {login,logOut} = authSlice.actions;
+     }
+})
+
+export const {login, logout} = authSlice.actions;
 
 export default authSlice.reducer;
-// Compare this snippet from Mega-Blog/src/store/store.js:
